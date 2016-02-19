@@ -22,8 +22,12 @@
 * 输出文件记录关键点的坐标
 </br>
 
-| time | position | x1 | y1 | x | y | z |
-| -----|:----:| ----:|
-| 2837473 | HEAD | 161 | 37 | 0.008273 | 0.492263 | 1.697776|
+<table>
+<tbody>
+<tr><td><em>time</em></td><td><em>position</em></td><td><em>x1</em></td><td><em>y1</em></td><td><em>x</em></td><td><em>y</em></td><td><em>z</em></td></tr>
+<tr><td>2837473</td><td>HEAD</td><td>161</td><td>37</td><td>0.008273</td><td>0.492263</td><td>1.697776</td></tr>
+</tbody>
+</table>
 
 * 其中x1和y1是处理后的二维坐标，x,y和z是原始三维坐标
+
