@@ -1,5 +1,6 @@
 clear
 clc
+% close all
 
 %% 1.read data
 filename='data.txt';
@@ -8,6 +9,7 @@ if(fid<=0)
     error(['error: The file named "',filename,'" was not open!']);
 end
 DS = textscan(fid,'%n %s %n %n %n %n %n');
+range=[min(DS{5}),max(DS{5}),min(DS{6}),max(DS{6}),min(DS{7}),max(DS{7})];
 fclose(fid);
 XY.SHOULDER=[];
 XY.ELBOW=[];
@@ -78,7 +80,7 @@ for i=1:1:length(XYZ.dataELBOW)
     xlabel('x')
     ylabel('y')
     zlabel('z')
-    axis([-0.5 0.5 -0.4 0.4 1 2])
+    axis(range);
     hold off
     
     subplot(1,3,2);
@@ -140,10 +142,21 @@ for i=1:1:length(XYZ.dataELBOW)
     
     %% 4.caculate
     %4.1
-    if(XYZ.dataSHOULDER(i,2)-XYZ.dataELBOW(i,2)<0.001)
-        angle1=90;
+%     if(XYZ.dataSHOULDER(i,2)-XYZ.dataELBOW(i,2)>0)
+%         angle1=atan((XYZ.dataSHOULDER(i,1)-XYZ.dataELBOW(i,1))/(XYZ.dataSHOULDER(i,2)-XYZ.dataELBOW(i,2)))/pi*180;
+%     elseif(XYZ.dataSHOULDER(i,2)-XYZ.dataELBOW(i,2)<0)
+%         angle1=-atan((XYZ.dataSHOULDER(i,1)-XYZ.dataELBOW(i,1))/(XYZ.dataSHOULDER(i,2)-XYZ.dataELBOW(i,2)))/pi*180; 
+%     else
+%         angle1=90;
+%     end
+    A=XYZ.dataELBOW(i,:)-XYZ.dataSHOULDER(i,:);
+    B=[XYZ.dataSHOULDER(i,1),XYZ.dataELBOW(i,2),XYZ.dataELBOW(i,3)]-XYZ.dataSHOULDER(i,:);
+    if(XYZ.dataSHOULDER(i,1)>XYZ.dataELBOW(i,1))%positive
+        angle1=acos(dot(A,B)/(norm(A)*norm(B)))/pi*180;
+    elseif(XYZ.dataSHOULDER(i,1)<XYZ.dataELBOW(i,1))%negative
+        angle1=-acos(dot(A,B)/(norm(A)*norm(B)))/pi*180;
     else
-        angle1=atan((XYZ.dataSHOULDER(i,1)-XYZ.dataELBOW(i,1))/(XYZ.dataSHOULDER(i,2)-XYZ.dataELBOW(i,2)))/pi*180;
+        angle1=90;
     end
     %4.2
     if(XYZ.dataSHOULDER(i,2)-XYZ.dataELBOW(i,2)>0)
@@ -187,8 +200,12 @@ for i=1:1:length(XYZ.dataELBOW)
     B=normalVector2;
     angle3=acos(dot(A,B)/(norm(A)*norm(B)))/pi*180;
     
-    angle=[angle;angle1,angle2,angle3,angle4];
+    angle=[angle;angle1,angle2,angle3,angle4]
 end
 
 clearvars alpha A B angle1 angle2 angle3 angle4 array elbowNew shoulderNew wristNew positionNew positionOld i ll lengthARM1 lengthARM2 plane
 clearvars destination normalVector1 normalVector2 shoulder2 wrist2
+save('/Users/ly/MyGithub/kinectForSkeleton/DataProcessing/data.mat')
+%% 5.plot angles
+figure
+plot(timeline,angle(:,1),'r',timeline,angle(:,2),'g',timeline,angle(:,3),'b',timeline,angle(:,4),'k')
